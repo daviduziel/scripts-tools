@@ -16,7 +16,7 @@ logger.addHandler(fh)
 
 
 def execute_youtube_dl(url):
-    download_path= f'{str(Path.home())}/video_downloads'
+    download_path = f'{str(Path.home())}/video_downloads'
     logger.info(f'Trying to download {url}')
     if not os.path.isdir(download_path):
         logger.error(f'The folder {download_path} doesn\'t exist')
@@ -24,7 +24,7 @@ def execute_youtube_dl(url):
 
     try:
         os.system(
-            f'youtube-dl "{url}" -f bestvideo+bestaudio --recode-video mkv --output "{download_path}/%(title)s"')
+            f'youtube-dl "{url}" -f bestvideo+bestaudio --recode-video mkv --output "{download_path}/%(title)s.%(ext)s"')
     except Exception:
         logger.error(f'The download of {url} failed')
 
