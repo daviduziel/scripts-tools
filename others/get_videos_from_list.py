@@ -15,13 +15,16 @@ fh.setLevel(logging.DEBUG)
 logger.addHandler(fh)
 
 
+def create_dlfolder(path):
+    if not os.path.isdir(path):
+        logger.error(f'The folder {path} doesn\'t exist')
+        os.mkdir(path)
+
+
 def execute_youtube_dl(url):
     download_path = f'{str(Path.home())}/video_downloads'
     logger.info(f'Trying to download {url}')
-    if not os.path.isdir(download_path):
-        logger.error(f'The folder {download_path} doesn\'t exist')
-        os.mkdir(download_path)
-
+    create_dlfolder(download_path)
     try:
         os.system(
             f'youtube-dl "{url}" -f bestvideo+bestaudio --recode-video mkv --output "{download_path}/%(title)s.%(ext)s"')
