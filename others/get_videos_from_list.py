@@ -4,6 +4,7 @@ import getopt
 import logging
 import os
 import sys
+import youtube_dl
 from pathlib import Path
 
 from file_helper import get_list_videos
@@ -15,21 +16,28 @@ fh.setLevel(logging.DEBUG)
 logger.addHandler(fh)
 
 
-def create_dlfolder(path):
-    if not os.path.isdir(path):
-        logger.error(f'The folder {path} doesn\'t exist')
-        os.mkdir(path)
+# def create_dlfolder(path):
+#     if not os.path.isdir(path):
+#         logger.error(f'The folder {path} doesn\'t exist')
+#         os.mkdir(path)
 
 
-def execute_youtube_dl(url):
-    download_path = f'{str(Path.home())}/video_downloads'
-    logger.info(f'Trying to download {url}')
+def my_hook(d):
+    if d['status'] == 'finished':
+        print('Done downloading, now converting ...')
+
+
+def execute_youtube_dl(urls):
+    # download_path = f'{str(Path.home())}/video_downloads'
+    logger.info(f'Trying to download {urls}')
     create_dlfolder(download_path)
-    try:
-        os.system(
-            f'youtube-dl "{url}" -f bestvideo+bestaudio --recode-video mkv --output "{download_path}/%(title)s.%(ext)s"')
-    except Exception:
-        logger.error(f'The download of {url} failed')
+    ydl_opts = {
+        'format': 'bestvideo+bestaudio',
+        'recode-video': 'mkv',
+        'progress_hooks': [my_hook],
+    }
+    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+        ydl.download(urls)
 
 
 def run_script(argv):
@@ -55,12 +63,7 @@ def run_script(argv):
 
     videos = get_list_videos(f_videos)
     logger.info(f"Videos: {len(videos)} ")
-    for video in videos:
-        try:
-            execute_youtube_dl(video)
-        except Exception as e:
-            logger.error(
-                f'Error  trying to save the video {e}')
+    execute_youtube_dl(videos)
 
 
 if __name__ == "__main__":
