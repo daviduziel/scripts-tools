@@ -30,7 +30,7 @@ def my_hook(d):
 def execute_youtube_dl(urls):
     # download_path = f'{str(Path.home())}/video_downloads'
     logger.info(f'Trying to download {urls}')
-    create_dlfolder(download_path)
+    # create_dlfolder(download_path)
     ydl_opts = {
         'format': 'bestvideo+bestaudio',
         'recode-video': 'mkv',
